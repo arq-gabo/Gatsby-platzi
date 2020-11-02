@@ -17,7 +17,7 @@ export default function Products({products}) {
                                 <p>{node.product.name}</p>
                                 <small>USD {price}</small>
                                 <Link to={`/${node.id}`}>
-                                    Comprar Ahora <span>-></span>
+                                    Comprar Ahora <span>→</span>
                                 </Link>
                             </article>
                         )

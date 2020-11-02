@@ -2,7 +2,7 @@ const path = require('path')
 
 exports.createPages = async({graphql, actions}) => {
     const { createPage } = actions
-    const productTemplate = path.resolve(`src/templates/Products.js`)
+    const productTemplate = path.resolve(`src/templates/Product.js`)
     const result = await graphql(`
     query GET_SKUS{
         allStripePrice{
@@ -30,7 +30,8 @@ exports.createPages = async({graphql, actions}) => {
     result.data.allStripePrice.edges.forEach(({node}) => {
         createPage({
             path: `${node.id}`,
-            component: productTemplate
+            component: productTemplate,
+            context: node
         })
     })
 }
