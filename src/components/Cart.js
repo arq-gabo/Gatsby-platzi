@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useStaticQuery } from "gatsby"
+import { Link } from "gatsby"
 import { Button, StyledCart } from "../styles/components"
 import priceFormat from "../utils/priceFormat"
 import { CartContext } from "../context"
@@ -9,6 +9,7 @@ export default function Cart() {
 
     const { cart } = useContext(CartContext)
     const [total, setTotal] = useState(0)
+    const [stripe, setStripe] = useState()
 
     const getTotal = () => {
         setTotal(
@@ -17,8 +18,28 @@ export default function Cart() {
     }
 
     useEffect(() => {
+        setStripe(window.Stripe(process.env.STRIPE_PK))
         getTotal()
     }, [])
+
+    const handleBuy = async event => {
+        event.preventDefault()
+        let item = cart.map(({ id, quantity }) => ({
+          price: id,
+          quantity: quantity,
+        }))
+  
+        const { error } = await stripe.redirectToCheckout({
+          lineItems: item,
+          mode: "payment",
+          successUrl: process.env.SUCCESS_REDIRECT,
+          cancelUrl: process.env.CANCEL_REDIRECT,
+        })
+        if (error) {
+          throw error
+        }
+    }
+
     return (
         <StyledCart>
             <h2>Carrito de Compras</h2>
@@ -57,7 +78,7 @@ export default function Cart() {
                     <Link to="/">
                         <Button type="outline">Volver</Button>
                     </Link>
-                    <Button>Comprar</Button>
+                    <Button onClick={handleBuy} disabled={cart.lenght === 0}>Comprar</Button>
                 </div>
             </nav>
 
