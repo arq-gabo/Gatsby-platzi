@@ -1,4 +1,3 @@
-import { element } from "prop-types"
 import React, { createContext, useState} from "react"
 
 export const CartContext = createContext()
